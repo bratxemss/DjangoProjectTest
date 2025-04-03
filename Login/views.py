@@ -14,7 +14,5 @@ def login(request):
 def register(request):
     return render(request, 'login/register.html')
 
-def forgot_password(request):
-    return render(request, 'login/forgot-password.html')
 
 

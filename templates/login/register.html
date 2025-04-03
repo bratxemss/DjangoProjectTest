@@ -47,7 +47,28 @@
             <div class="auth-footer">
                 Already have an account? <a href="/login">Sign In</a>
             </div>
+
+            <input type="hidden" id="username-hidden" name="username">
+            <input type="hidden" id="email-hidden" name="email">
+            <input type="hidden" id="password-hidden" name="password">
+            <input type="hidden" id="confirmPassword-hidden" name="confirmPassword">
         </form>
+
+        <div id="step2" style="display: none;">
+            <div class="auth-header">
+                <h1>Code verification</h1>
+                <p>We sent a verification code to your email. Enter it below.</p>
+            </div>
+
+            <form id="verifyCodeForm">
+                <div class="input-group">
+                    <input type="text" id="verification-code" required>
+                    <label for="verification-code">Verification Code</label>
+                </div>
+
+                <button type="submit" class="auth-button">Confirm</button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -64,14 +85,56 @@
                 return;
             }
 
+            document.getElementById('username-hidden').value = username;
+            document.getElementById('email-hidden').value = email;
+            document.getElementById('password-hidden').value = password;
+            document.getElementById('confirmPassword-hidden').value = confirmPassword;
+
+            fetch("{% url 'register_user' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password,
+                    password_copy: confirmPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('step2').style.display = 'block';
+                    document.getElementById('registerForm').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during registration.');
+            });
+        });
+
+        document.getElementById('verifyCodeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('verification-code').value;
+            const username = document.getElementById('username-hidden').value;
+            const email = document.getElementById('email-hidden').value;
+            const password = document.getElementById('password-hidden').value;
+            const confirmPassword = document.getElementById('confirmPassword-hidden').value;
+
             const data = {
                 username: username,
                 email: email,
                 password: password,
-                password_copy: confirmPassword
+                password_copy: confirmPassword,
+                code: code,
             };
 
-            fetch("{% url 'register_user' %}", {
+            fetch("{% url 'verify_code' %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,16 +144,15 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    alert('Registration successful!');
+                if (data.success) {
                     window.location.href = '/main_page';
+                } else {
+                    alert('Invalid code. Please try again.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred during registration.');
+                alert('An error occurred during code verification.');
             });
         });
     </script>

@@ -18,20 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from Login.views import login, register, forgot_password, main
-from Login.api import login_view, register_user
+from Login.views import login, register, main
+from Login.api import login_view, register_user, check_code, exit
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-
+    path('api/exit', exit, name='exit'),
     path('api/login/', login_view, name='api_login'),
     path('api/register/', register_user, name='register_user'),
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    path('api/check_code', check_code, name='verify_code'),
+
     path('login/', login, name='login_page'),
     path('register/', register, name='register_page'),
-    path('forgot_password/', forgot_password, name='forgot_password_page'),
     path('', main, name='main_page'),
 
 ]
