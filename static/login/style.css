@@ -113,6 +113,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    margin-left: 27%;
     font-size: 13px;
 }
 
@@ -246,4 +247,8 @@ body {
 
 .back-to-login:hover {
     text-decoration: underline;
+}
+
+.error-message{
+
 }
