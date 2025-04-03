@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в систему</title>
+    <title>Log in</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     {% load static %}
     <link rel="stylesheet" href="{% static 'login/style.css' %}">
@@ -14,43 +14,31 @@
             <h1>Welcome</h1>
             <p>Log in to your account</p>
         </div>
+        <form id="login-form" method="POST" action="{% url 'api_login' %}">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" id="username" name="username" required>
+                <label for="username">User Name</label>
+            </div>
 
-        <form id="loginForm">
+            <div class="input-group">
+                <input type="password" id="password" name="password" required>
+                <label for="password">Password</label>
+            </div>
 
-            <form method="POST" action="{% url 'login' %}">
-                {% csrf_token %}
-                <div class="input-group">
-                    <input type="text" id="username" required>
-                    <label for="username">User Name</label>
-                </div>
-
-                <div class="input-group">
-                    <input type="password" id="password" required>
-                    <label for="password">Password</label>
-                </div>
-
-                <button type="submit" class="auth-button">Sign in</button>
-            </form>
+            <button type="submit" class="auth-button">Sign in</button>
 
             <div class="remember-forgot">
-                <div class="remember-me">
-                    <input type="checkbox" id="remember">
-                    <label for="remember">Remember me</label>
-                </div>
-
                 <div class="forgot-password">
-                    <a href="forgot_password">Forgot your password?</a>
+                    <a href="auth/forgot_password">Forgot your password?</a>
                 </div>
             </div>
 
-
-
             <div class="auth-footer">
-                You don't have an account yet? <a href="register">Sign up</a>
+                You don't have an account yet? <a href="auth/register">Sign up</a>
             </div>
 
             <div class="social-auth">
-                <p>Or log in via</p>
                 <div class="social-icons">
                     <div class="social-icon google">
                         <i class="fab fa-google"></i>
@@ -64,13 +52,44 @@
                 </div>
             </div>
         </form>
+
+
+        <div id="error-message" style="color: red; display: none;"></div>
+        <div id="success-message" style="color: green; display: none;"></div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.getElementById('login-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-            alert('Entry granted! (this is a demo)');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            const response = await fetch('{% url "api_login" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('success-message').innerText = 'Login successful!';
+                document.getElementById('error-message').style.display = 'none';
+                window.location.href = '/main_page';
+            } else {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').innerText = result.error || 'An error occurred';
+                document.getElementById('success-message').style.display = 'none';
+            }
         });
     </script>
 </body>
