@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'login/style.css' %}">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Create an account</h1>
+            <p>Fill out the form to register</p>
+        </div>
+
+        <form id="registerForm">
+            <div class="input-group">
+                <input type="text" id="reg-username" required>
+                <label for="reg-username">User Name</label>
+            </div>
+
+            <div class="input-group">
+                <input type="email" id="reg-email" required>
+                <label for="reg-email">Email</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="reg-password" required>
+                <label for="reg-password">Password</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="reg-confirm-password" required>
+                <label for="reg-confirm-password">Confirm password</label>
+            </div>
+
+            <div class="remember-me" style="margin-bottom: 20px;">
+                <input type="checkbox" id="agree-terms" required>
+                <label for="agree-terms">I agree with <a href="#">conditions of use</a></label>
+            </div>
+
+            <button type="submit" class="auth-button">Sign up</button>
+
+            <div class="auth-footer">
+                Already have an account? <a href="login">Sign in</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+
+            // Здесь можно добавить AJAX-запрос для регистрации
+            alert('Регистрация успешна! (это демо)');
+        });
+    </script>
+</body>
+</html>
