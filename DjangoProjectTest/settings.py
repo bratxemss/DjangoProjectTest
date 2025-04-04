@@ -148,8 +148,6 @@ SIMPLE_JWT = {
 }
 
 
-# settings.py
-
 CELERY_BROKER_URL = 'sqla+sqlite:///celerydb.sqlite'
 CELERY_RESULT_BACKEND = 'db+sqlite:///celerydb.sqlite'
 CELERY_ACCEPT_CONTENT = ['json']
