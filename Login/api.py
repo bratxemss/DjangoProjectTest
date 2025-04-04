@@ -44,21 +44,21 @@ def register_user(request):
 
         print(request.data)
         if not username or not email or not password or not password_copy:
-            return Response({"error": "Все поля обязательны для заполнения"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         if password != password_copy:
-            return Response({"error": "Пароли не совпадают"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "The passwords don't match"}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(username=username).exists():
-            return Response({"error": "Имя пользователя уже занято"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "The username is already taken"}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(email=email).exists():
-            return Response({"error": "Email уже используется"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Email is already in use"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             validate_password(password)
         except ValidationError as e:
-            return Response({"error": f"Пароль не соответствует требованиям: {', '.join(e.messages)}"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": f"Password does not meet the requirements: {', '.join(e.messages)}"}, status=status.HTTP_400_BAD_REQUEST)
 
 
         send_code_to_email.delay(email)
